@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "65979687355",
+    "project_id": "airqo-a4232",
+    "storage_bucket": "airqo-a4232.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65979687355:android:6169ed6a5ab78d6421e49e",
+        "android_client_info": {
+          "package_name": "com.example.ecomm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "65979687355-rs99d44dht3a9mk8ckqcr6sojd897a5b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf9NaFnK90JHeeiXDfVC_Cyf7Uq77DzE0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "65979687355-rs99d44dht3a9mk8ckqcr6sojd897a5b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "65979687355-7mq1e9enm4jekjf9n5eni8tqrd294s8n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.airqo.net"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
