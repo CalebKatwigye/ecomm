@@ -18,30 +18,29 @@ class _SavedPageState extends State<SavedPage> {
     user = FirebaseAuth.instance.currentUser!;
   }
 
-  void unsavePost(BuildContext context) async {
-    // try {
-    //   final user = FirebaseAuth.instance.currentUser!;
-    //   await FirebaseFirestore.instance
-    //       .collection("Ecomm Users")
-    //       .doc(user.uid)
-    //       .update({
-    //     'savedPosts': FieldValue.arrayRemove([formattedDate])
-    //   });
-    //   Navigator.of(context).pop();
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text(
-    //         'Post unsaved successfully!',
-    //         style: TextStyle(color: Colors.white),
-    //       ),
-    //       backgroundColor: Color.fromARGB(255, 4, 123, 8),
-    //     ),
-    //   );
-    // } catch (error) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Error unsaving post: $error')),
-    //   );
-    // }
+  void unsavePost(BuildContext context, String postId) async {
+    try {
+      // Remove the postId from the 'savedPosts' array in Firestore
+      await FirebaseFirestore.instance
+          .collection('Ecomm Users')
+          .doc(user.uid)
+          .update({
+        'savedPosts': FieldValue.arrayRemove([postId])
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Post unsaved successfully!'),
+        ),
+      );
+
+      // Reload the saved page to reflect changes
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error unsaving post: $error')),
+      );
+    }
   }
 
   @override
@@ -114,88 +113,158 @@ class _SavedPageState extends State<SavedPage> {
                             return FractionallySizedBox(
                               heightFactor: 0.9,
                               child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.grey[400],
+                                ),
                                 padding: EdgeInsets.all(20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (postData['ImageURL'] != null)
-                                      Image.network(
-                                        postData['ImageURL'] ?? '',
-                                        width: double.infinity,
-                                        height: 300,
-                                        fit: BoxFit.contain,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          width:
+                                              40, // Adjust the width of the line as per your preference
+                                          height: 4.0,
+                                          color: Colors.grey,
+                                          margin: EdgeInsets.symmetric(
+                                              vertical:
+                                                  10), // Adjust the margin as per your preference
+                                        ),
                                       ),
-                                    SizedBox(height: 20),
-                                    Text(
-                                      'Item: '+
-                                      postData['ItemName'] ?? '',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Text(
-                                      'Price: UGX '+
-                                      postData['Price'] ?? '',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Text(
-                                      'Category: '+
-                                      postData['Category'] ?? '',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Text(
-                                      'Description: '+
-                                      postData['Description'] ?? '',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    SizedBox(height: 20),
-                                    Container(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          ElevatedButton(
-                                            style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStateProperty.all<
-                                                      Color>(
-                                                Colors
-                                                    .red, // Always red for unsave button
+                                      SizedBox(height: 20),
+                                      if (postData['ImageURL'] != null)
+                                        Image.network(
+                                          postData['ImageURL'] ?? '',
+                                          width: double.infinity,
+                                          height: 300,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        'Price: UGX ' + postData['Price'] ?? '',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color:
+                                                Color.fromARGB(255, 4, 123, 8)),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        'Item: ' + postData['ItemName'] ?? '',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.grey[600]),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        'Category: ' + postData['Category'] ??
+                                            '',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.grey[600]),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        'Location: ' + postData['Location'] ?? '',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.grey[600]),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Text(
+                                        'Description: ' +
+                                                postData['Description'] ??
+                                            '',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.grey[600]),
+                                      ),
+                                      SizedBox(height: 30),
+                                      Divider(
+                                        color: Colors.grey[700],
+                                      ),
+                                      SizedBox(height: 30),
+                                      Container(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            ElevatedButton(
+                                              style: ButtonStyle(
+                                                shape:
+                                                    MaterialStateProperty.all<
+                                                        RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0), // Adjust the value as per your requirement
+                                                    side: BorderSide(
+                                                        color: Colors
+                                                            .white), // Outline color as white
+                                                  ),
+                                                ),
+                                                backgroundColor:
+                                                    MaterialStateProperty.all<
+                                                        Color>(
+                                                  Color.fromARGB(255, 179, 13,
+                                                      1), // Always red for unsave button
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                unsavePost(
+                                                    context, savedPosts[index]);
+                                                Navigator.of(context)
+                                                    .pop(); // Call unsavePost function
+                                              },
+                                              child: Text(
+                                                'Unsave',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white),
                                               ),
                                             ),
-                                            onPressed: () {
-                                              unsavePost(
-                                                  context); // Call unsavePost function
-                                            },
-                                            child: Text(
-                                              'Unsave',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                          ElevatedButton(
-                                            style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStateProperty.all<
-                                                      Color>(
-                                                Color.fromARGB(255, 4, 123, 8),
+                                            ElevatedButton(
+                                              style: ButtonStyle(
+                                                shape:
+                                                    MaterialStateProperty.all<
+                                                        RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0), // Adjust the value as per your requirement
+                                                    side: BorderSide(
+                                                        color: Colors
+                                                            .white), // Outline color as white
+                                                  ),
+                                                ),
+                                                backgroundColor:
+                                                    MaterialStateProperty.all<
+                                                        Color>(
+                                                  Color.fromARGB(
+                                                      255, 4, 123, 8),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text(
+                                                'Message Vendor',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white),
                                               ),
                                             ),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -204,7 +273,7 @@ class _SavedPageState extends State<SavedPage> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Color.fromARGB(51, 134, 131, 131),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         margin:
@@ -219,20 +288,31 @@ class _SavedPageState extends State<SavedPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Item: '+
-                                    postData['ItemName'] ?? '',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    'Price: UGX ' + postData['Price'] ?? '',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Color.fromARGB(255, 4, 123, 8)),
+                                  ),
+                                  Text(
+                                    'Item: ' + postData['ItemName'] ?? '',
+                                    style: TextStyle(
+                                        color: Colors.grey[700], fontSize: 16),
                                   ),
                                   SizedBox(
                                       height:
-                                          5), // Add spacing between title and description
-                                  Text(
-                                    'Price: UGX '+
-                                    postData['Price'] ?? '',
-                                    style: TextStyle(color: Colors.grey),
+                                          15), 
+                                   Text(
+                                    'Location: ' + postData['Location'] ?? '',
+                                    style: TextStyle(
+                                        color: Colors.grey[700], fontSize: 16),
                                   ),
                                 ],
+                              ),
+                              Container(
+                                width: 2,
+                                height: 70,
+                                color: Colors.grey,
+                                margin: EdgeInsets.symmetric(vertical: 10),
                               ),
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecomm/pages/chatpage.dart';
 import 'package:ecomm/pages/messages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,7 +12,9 @@ class MyAdPost extends StatelessWidget {
   final String category;
   final String description;
   final String formattedDate;
+  final String location;
   final String imageUrl;
+   final String receiverUserID; 
 
   const MyAdPost({
     Key? key,
@@ -22,6 +25,7 @@ class MyAdPost extends StatelessWidget {
     required this.description,
     required this.imageUrl,
     required this.formattedDate,
+    required this.location, required this.receiverUserID,
   }) : super(key: key);
 
   void savePost(BuildContext context) async {
@@ -71,7 +75,18 @@ class MyAdPost extends StatelessWidget {
     }
   }
 
-  
+   void messageVendor(BuildContext context) {
+    // Navigate to the ChatPage with receiver's details
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          receiverEmail: email,
+          receiverUserID: receiverUserID,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,88 +102,144 @@ class MyAdPost extends StatelessWidget {
             return FractionallySizedBox(
               heightFactor: 0.9,
               child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey[400],
+                ),
                 padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (imageUrl != null)
-                      Image.network(
-                        imageUrl,
-                        width: double.infinity,
-                        height: 300,
-                        fit: BoxFit.contain,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4.0,
+                          color: Colors.grey,
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                        ),
                       ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Price UGX: $price',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      'Item: $name',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      'Category: $category',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      'Description: $description',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                      alignment: Alignment.bottomCenter,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                isUserPost
-                                    ? Colors.red
-                                    : Color.fromARGB(255, 4, 123, 8),
+                      SizedBox(height: 20),
+                      if (imageUrl != null)
+                        Image.network(
+                          imageUrl,
+                          width: double.infinity,
+                          height: 300,
+                          fit: BoxFit.contain,
+                        ),
+                      SizedBox(height: 20),
+                      Text(
+                        'PRICE UGX: $price',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 4, 123, 8)),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Item: $name',
+                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Category: $category',
+                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Location: $location',
+                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Description: $description',
+                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                      ),
+                      SizedBox(height: 30),
+                      Divider(
+                        color: Colors.grey[700],
+                      ),
+                      SizedBox(height: 30),
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        10.0), // Adjust the value as per your requirement
+                                    side: BorderSide(
+                                        color: Colors
+                                            .white), // Outline color as white
+                                  ),
+                                ),
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  isUserPost
+                                      ? Color.fromARGB(255, 179, 13, 1)
+                                      : Color.fromARGB(255, 4, 123, 8),
+                                ),
+                              ),
+                              onPressed: () {
+                                if (isUserPost) {
+                                  deletePost(context);
+                                } else {
+                                  // Implement message seller action
+                                  messageVendor(context);
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => ChatPage(receiverEmail: 'email', receiverUserID: 'uid',)));
+                                }
+                              },
+                              child: Text(
+                                isUserPost ? 'Delete Ad' : 'Message Vendor',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
                               ),
                             ),
-                            onPressed: () {
-                              if (isUserPost) {
-                                deletePost(context);
-                              } else {
-                                // Implement message seller action
-                                
-                              }
-                            },
-                            child: Text(
-                              isUserPost ? 'Delete Ad' : 'Message Seller',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                isUserPost
-                                    ? Color.fromARGB(255, 4, 123, 8)
-                                    : Color.fromARGB(255, 243, 215, 3),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        10.0), // Adjust the value as per your requirement
+                                    side: BorderSide(
+                                        color: Colors
+                                            .white), // Outline color as white
+                                  ),
+                                ),
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  isUserPost
+                                      ? Color.fromARGB(255, 4, 123, 8)
+                                      : Color.fromARGB(255, 243, 191, 3),
+                                ),
+                              ),
+                              onPressed: () {
+                                if (isUserPost) {
+                                  Navigator.of(context).pop();
+                                } else {
+                                  savePost(context);
+                                }
+                              },
+                              child: Text(
+                                isUserPost ? 'Cancel' : 'Save',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
                               ),
                             ),
-                            onPressed: () {
-                              if (isUserPost) {
-                                Navigator.of(context).pop();
-                              } else {
-                                savePost(context);
-                              }
-                            },
-                            child: Text(
-                              isUserPost ? 'Cancel' : 'Save',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -177,7 +248,7 @@ class MyAdPost extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color.fromARGB(51, 134, 131, 131),
           borderRadius: BorderRadius.circular(8),
         ),
         margin: EdgeInsets.symmetric(vertical: 25, horizontal: 25),
@@ -190,16 +261,39 @@ class MyAdPost extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Price: UGX $price'),
-                  Text('Item: $name'),
+                  Text(
+                    'PRICE: UGX $price',
+                    style: TextStyle(
+                        fontSize: 17, color: Color.fromARGB(255, 4, 123, 8)),
+                  ),
+                  Text(
+                    'Item: $name',
+                    style: TextStyle(color: Colors.grey[800]),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    '$location',
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
                 ],
               ),
+              Container(
+                width: 2,
+                height: 70,
+                color: Colors.grey,
+                margin: EdgeInsets.symmetric(vertical: 10),
+              ),
               if (imageUrl != null)
-                Image.network(
-                  imageUrl,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    imageUrl,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
                 )
               else
                 Text('No Image'),

@@ -1,7 +1,8 @@
 
+import 'package:ecomm/pages/dummy.dart';
 import 'package:ecomm/pages/homerpage.dart';
 import 'package:ecomm/pages/messages.dart';
-import 'package:ecomm/pages/profilepage.dart';
+
 import 'package:ecomm/pages/savedpage.dart';
 import 'package:ecomm/pages/sellpage.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     const SavedPage(),
     const SellPage(),
     const MessagesPage(),
-    const ProfilePage(),
+    const ProfilerPage(),
   ];
 
 

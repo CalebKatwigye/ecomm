@@ -24,6 +24,7 @@ class _SellPageState extends State<SellPage> {
   final priceController = TextEditingController();
   final descriptionController = TextEditingController();
   File? selectedImage;
+  String? selectedLocation;
 
   final List<String> categories = [
     'Cars',
@@ -36,6 +37,20 @@ class _SellPageState extends State<SellPage> {
     'Gadgets',
     'Kids',
     // Add more categories as needed
+  ];
+
+  final List<String> locations = [
+    'New York',
+    'Los Angeles',
+    'Chicago',
+    'Houston',
+    'Phoenix',
+    'Philadelphia',
+    'San Antonio',
+    'San Diego',
+    'Dallas',
+    'San Jose',
+    // Add more locations as needed
   ];
 
   Future<void> _pickImageFromGallery() async {
@@ -51,6 +66,18 @@ class _SellPageState extends State<SellPage> {
 
   Future<void> postAd() async {
     try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Center(
+          child: Container(
+            color: Colors.black.withOpacity(0.5),
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+
       DateTime now = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
@@ -63,14 +90,19 @@ class _SellPageState extends State<SellPage> {
           .doc(formattedDate)
           .set({
         'UserEmail': user.email,
+        'uid':user.uid,
         'ad-id': formattedDate,
         'ItemName': itemNameController.text,
         'Description': descriptionController.text,
         'Price': priceController.text,
+        'Location': selectedLocation,
         'Category': selectedCategory,
         'TimeStamp': Timestamp.now(),
         'ImageURL': imageUrl,
       });
+
+      // Dismiss loading indicator
+      Navigator.pop(context);
 
       // Show success dialog
       showDialog(
@@ -79,7 +111,7 @@ class _SellPageState extends State<SellPage> {
           return AlertDialog(
             title: Text('Ad Posted!'),
             content: Text(
-              'Your ad has been posted! You will be notified when it is accepted.',
+              'Your ad has been posted! ',
             ),
             actions: [
               TextButton(
@@ -98,6 +130,7 @@ class _SellPageState extends State<SellPage> {
       setState(() {
         selectedImage = null;
         selectedCategory = null;
+        selectedLocation = null;
       });
     } catch (e) {
       print('Error posting ad: $e');
@@ -146,8 +179,24 @@ class _SellPageState extends State<SellPage> {
               SizedBox(height: 25),
               TextField(
                 controller: priceController,
+                decoration: InputDecoration(labelText: 'Price. (Only numbers)'),
+              ),
+              SizedBox(height: 25),
+              DropdownButtonFormField<String>(
+                value: selectedLocation,
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedLocation = newValue;
+                  });
+                },
+                items: locations.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
                 decoration: InputDecoration(
-                    labelText: 'Price. (Only numbers)'),
+                    labelText: 'Location'), // Location field added
               ),
               SizedBox(height: 25),
               TextField(

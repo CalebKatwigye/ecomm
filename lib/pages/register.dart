@@ -34,6 +34,7 @@ class RegisterPage extends StatelessWidget {
               .collection("Ecomm Users")
               .doc(userCredential.user!.uid) // Use UID instead of email
               .set({
+            'uid': userCredential.user!.uid,
             'email': emailController.text,
             'username': nameController.text,
             'phonenumber': phoneController.text,

@@ -9,6 +9,8 @@ import 'package:ecomm/pages/categoriespages.dart/kids.dart';
 import 'package:ecomm/pages/categoriespages.dart/laptops.dart';
 import 'package:ecomm/pages/categoriespages.dart/pets.dart';
 import 'package:ecomm/pages/categoriespages.dart/trending.dart';
+
+import 'package:ecomm/pages/searchresultspage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ecomm/components/adcard.dart';
@@ -22,22 +24,181 @@ class HomerPage extends StatefulWidget {
 }
 
 class _HomerPageState extends State<HomerPage> {
+  String? selectedCategory;
+
+  final List<String> categories = [
+    'Cars',
+    'Furniture',
+    'Fashion',
+    'Groceries',
+    'Houses',
+    'Laptops',
+    'Pets',
+    'Gadgets',
+    'Kids',
+  ];
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchPage(),
+                  ),
+                );
+              },
+              icon: Icon(Icons.search),
+              color: Colors.white,
+            ),
+          )
+        ],
         automaticallyImplyLeading: false,
         backgroundColor: Color.fromARGB(255, 4, 123, 8),
         centerTitle: true,
         title: Text(
-          "Home",
+          "Go to Search",
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
+      backgroundColor: Colors.grey[300],
       body: CustomScrollView(
         slivers: [
+          SliverToBoxAdapter(
+            child: Container(
+              height: 200, //
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    GestureDetector(
+                        onTap: () {},
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(7.0),
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Color.fromARGB(255, 4, 123, 8),
+                                      width: 2,
+                                    ),
+                                    color: Color.fromARGB(51, 134, 131, 131),
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Column(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.asset(
+                                        "lib/assets/money.png",
+                                        fit: BoxFit.cover,
+                                        width: 130,
+                                        height: 100,
+                                      ),
+                                    ),
+                                    Text(
+                                      "How to sell",
+                                      style: TextStyle(color: Colors.grey[800]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
+                    GestureDetector(
+                        onTap: () {
+                          //         Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => ChatListPage(),
+                          //   ),
+                          // );
+                        },
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(7.0),
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Color.fromARGB(255, 6, 77, 200),
+                                      width: 2,
+                                    ),
+                                    color: Color.fromARGB(51, 134, 131, 131),
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Column(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.asset(
+                                        "lib/assets/game.png",
+                                        fit: BoxFit.cover,
+                                        width: 130,
+                                        height: 100,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Play game",
+                                      style: TextStyle(color: Colors.grey[800]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
+                    GestureDetector(
+                        onTap: () {},
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(7.0),
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Color.fromARGB(255, 181, 3, 204),
+                                      width: 2,
+                                    ),
+                                    color: Color.fromARGB(51, 134, 131, 131),
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Column(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.asset(
+                                        "lib/assets/buy.png",
+                                        fit: BoxFit.cover,
+                                        width: 130,
+                                        height: 100,
+                                      ),
+                                    ),
+                                    Text(
+                                      "How to buy",
+                                      style: TextStyle(color: Colors.grey[800]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          ),
           SliverGrid.count(
             crossAxisCount: 4,
             children: [
@@ -173,7 +334,8 @@ class _HomerPageState extends State<HomerPage> {
                         description: post['Description'],
                         imageUrl:
                             imageUrl, // Pass the imageUrl to MyAdPost widget
-                            formattedDate:snapshot.data!.docs[index].id,
+                        formattedDate: snapshot.data!.docs[index].id,
+                        location: post['Location'], receiverUserID: post['uid'],
                       );
                     },
                     childCount: snapshot.data!.docs.length,

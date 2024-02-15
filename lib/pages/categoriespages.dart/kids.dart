@@ -52,7 +52,8 @@ class _KidsPageState extends State<KidsPage> {
                     price: post['Price'],
                     category: post['Category'],
                     description: post['Description'],
-                    imageUrl: imageUrl,
+                    imageUrl: imageUrl,location: post['Location'],receiverUserID: post['uid'],
+                    
                   );
                 },
               );

@@ -52,7 +52,9 @@ class _CarsPageState extends State<CarsPage> {
                     price: post['Price'],
                     category: post['Category'],
                     description: post['Description'],
-                    imageUrl: imageUrl,
+                    imageUrl: imageUrl,location: post['Location'],
+                    receiverUserID: post['uid'],
+                    
                   );
                 },
               );
