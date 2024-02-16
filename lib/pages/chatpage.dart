@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomm/chatservice/chatservice.dart';
-import 'package:ecomm/components/chatbubble.dart';
+
 import 'package:ecomm/components/mytextfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -104,13 +104,66 @@ class _ChatPageState extends State<ChatPage> {
           _markMessageAsRead(doc);
         });
 
+        // Sort messages by date
+        documents.sort((a, b) {
+          DateTime aDate = (a['timeStamp'] as Timestamp).toDate();
+          DateTime bDate = (b['timeStamp'] as Timestamp).toDate();
+          return aDate.compareTo(bDate);
+        });
+
+        List<Widget> messageWidgets = [];
+        DateTime? lastDate;
+
+        for (var document in documents) {
+          DateTime messageDate = (document['timeStamp'] as Timestamp).toDate();
+          DateTime now = DateTime.now();
+          String formattedDate;
+
+          if (isSameDay(messageDate, now)) {
+            formattedDate = 'Today';
+          } else if (isSameDay(
+              messageDate, now.subtract(const Duration(days: 1)))) {
+            formattedDate = 'Yesterday';
+          } else {
+            formattedDate = DateFormat('MMMM dd, yyyy').format(messageDate);
+          }
+
+          // Check if the current message date is different from the last message date
+          if (lastDate == null || !isSameDay(messageDate, lastDate)) {
+            // Add a text widget to display the message date
+            messageWidgets.add(
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  color: Colors.grey[350],
+                  child: Center(
+                    child: Text(
+                      formattedDate,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                    ),
+                  ),
+                ),
+              ),
+            );
+            lastDate = messageDate;
+          }
+
+          // Add the message item to the list
+          messageWidgets.add(_buildMessageItem(document));
+        }
+
         return ListView(
-          children: documents.map((document) {
-            return _buildMessageItem(document);
-          }).toList(),
+          children: messageWidgets,
         );
       },
     );
+  }
+
+// Method to check if two dates are on the same day
+  bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 
   void _markMessageAsRead(DocumentSnapshot document) async {
@@ -137,7 +190,7 @@ class _ChatPageState extends State<ChatPage> {
     bool isRead = data['isRead'] ?? false;
 
     // Determine the color of the ticks based on whether the message has been read
-    Color tickColor = isRead ? Colors.blue : Colors.white;
+    Color tickColor = isRead ? Color.fromARGB(255, 91, 171, 236) : Colors.white;
 
     // Display blue ticks only on the sender's message
     Widget ticksWidget = Row(

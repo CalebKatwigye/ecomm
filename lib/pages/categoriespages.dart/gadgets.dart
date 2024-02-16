@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomm/components/adcard.dart';
 import 'package:ecomm/pages/homepage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 
 class GadgetsPage extends StatefulWidget {
@@ -16,7 +16,7 @@ class _GadgetsPageState extends State<GadgetsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
+   
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(

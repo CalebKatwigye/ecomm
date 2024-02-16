@@ -11,7 +11,7 @@ import 'package:ecomm/pages/categoriespages.dart/pets.dart';
 import 'package:ecomm/pages/categoriespages.dart/trending.dart';
 
 import 'package:ecomm/pages/searchresultspage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:ecomm/components/adcard.dart';
 import 'package:ecomm/components/mytab.dart';
@@ -40,7 +40,7 @@ class _HomerPageState extends State<HomerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
+   
     return Scaffold(
       appBar: AppBar(
         actions: [
