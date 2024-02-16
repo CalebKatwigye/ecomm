@@ -131,7 +131,7 @@ class MyAdPost extends StatelessWidget {
                         ),
                       SizedBox(height: 20),
                       Text(
-                        'PRICE UGX: $price',
+                        'PRICE: UGX $price',
                         style: TextStyle(
                             fontSize: 20,
                             color: Color.fromARGB(255, 4, 123, 8)),

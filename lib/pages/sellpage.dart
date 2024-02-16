@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 class SellPage extends StatefulWidget {
   const SellPage({
@@ -90,7 +91,7 @@ class _SellPageState extends State<SellPage> {
           .doc(formattedDate)
           .set({
         'UserEmail': user.email,
-        'uid':user.uid,
+        'uid': user.uid,
         'ad-id': formattedDate,
         'ItemName': itemNameController.text,
         'Description': descriptionController.text,
@@ -178,6 +179,8 @@ class _SellPageState extends State<SellPage> {
               ),
               SizedBox(height: 25),
               TextField(
+                inputFormatters: [ThousandsSeparatorInputFormatter()],
+                keyboardType: TextInputType.number,
                 controller: priceController,
                 decoration: InputDecoration(labelText: 'Price. (Only numbers)'),
               ),
@@ -240,5 +243,23 @@ class _SellPageState extends State<SellPage> {
       print('Error uploading image: $e');
       throw Exception('Failed to upload image.');
     }
+  }
+
+  
+}
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.selection.baseOffset == 0) {
+      return newValue;
+    }
+    double value = double.parse(newValue.text.replaceAll(',', ''));
+    final formatter = NumberFormat("#,###");
+    String newText = formatter.format(value);
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
   }
 }

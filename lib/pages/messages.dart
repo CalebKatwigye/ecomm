@@ -52,78 +52,67 @@ class _MessagesPageState extends State<MessagesPage> {
         });
   }
 
-  Widget _buildUserListItem(DocumentSnapshot document) {
-    Map<String, dynamic>? data =
-        document.data() as Map<String, dynamic>?; // Nullable map
+  
 
-    if (_auth.currentUser!.email != data?['email']) {
-      return Column(
-        children: [
-          ListTile(
-            // Leading avatar with customizable colors and initials
-            leading: CircleAvatar(
-              radius: 25.0, // Adjust radius as needed
-              backgroundColor: data?['avatarColor'] ??
-                  const Color.fromARGB(
-                      255, 91, 89, 89), // Use provided avatarColor or a default
-              backgroundImage:
-                  (data?['photoURL'] != null) // Check for photoURL first
-                      ? NetworkImage(
-                          data?['photoURL']!) // Use photoURL if available
-                      : null, // Otherwise, use initials
-              child: (data?['photoURL'] ==
-                      null) // If no photoURL, create initials
-                  ? Text(
-                      // Extract initials from username or use placeholder
-                      data?['username']?.substring(0, 1).toUpperCase() ?? '?',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : null,
+ Widget _buildUserListItem(DocumentSnapshot document) {
+  Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+
+  if (_auth.currentUser!.email != data?['email']) {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection("chat_rooms")
+          .doc(_auth.currentUser!.uid + '_' + data?['uid'])
+          .collection("messages")
+          .where('isRead', isEqualTo: false)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Error');
+        }
+
+        bool hasUnreadMessages = snapshot.hasData && snapshot.data!.docs.isNotEmpty;
+
+        return Column(
+          children: [
+            ListTile(
+              leading: CircleAvatar(
+                radius: 25.0,
+                backgroundColor: data?['avatarColor'] ?? Color.fromARGB(255, 112, 14, 126),
+                backgroundImage: data?['photoURL'] != null ? NetworkImage(data?['photoURL']!) : null,
+                child: data?['photoURL'] == null ? Text(data?['username']?.substring(0, 1).toUpperCase() ?? '?',
+                  style: TextStyle(fontSize: 16.0, color: Colors.white, fontWeight: FontWeight.bold),
+                ) : null,
+              ),
+              title: Text(data?['username'] ?? 'Unknown User', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+              subtitle: hasUnreadMessages ? Text('New Message', style: TextStyle(color: Color.fromARGB(255, 4, 123, 8),fontWeight: FontWeight.bold)) : null,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatPage(
+                      receiverEmail: data?['email'],
+                      receiverUserID: data?['uid'],
+                    ),
+                  ),
+                );
+              },
+              contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             ),
-
-            // Title with customizable font size and weight
-            title: Text(
-              data?['username'] ?? 'Unknown User', // Handle missing username
-              style: TextStyle(
-                fontSize: 16.0, // Adjust font size
-                fontWeight:
-                    FontWeight.bold, // Consider adjusting weight as needed
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, right: 15),
+              child: Divider(
+                color: Colors.grey[500],
+                height: 0.5,
               ),
             ),
-
-            // Tap action
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatPage(
-                    receiverEmail: data?['email'],
-                    receiverUserID: data?['uid'],
-                  ),
-                ),
-              );
-            },
-
-            // Add visual polish with a subtle elevation
-            contentPadding: EdgeInsets.symmetric(
-                horizontal: 16.0, vertical: 8.0), // Adjust padding as needed
-            // Customize elevation as desired
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left:15.0, right: 15),
-            child: Divider(
-              color: Colors.grey[500], // Customize color as needed
-              height: 0.5, // Adjust height as needed
-            ),
-          )
-        ],
-      );
-    } else {
-      return Container();
-    }
+          ],
+        );
+      },
+    );
+  } else {
+    return Container();
   }
+}
+
+
 }
