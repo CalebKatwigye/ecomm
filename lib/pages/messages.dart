@@ -77,7 +77,7 @@ class _MessagesPageState extends State<MessagesPage> {
             ListTile(
               leading: CircleAvatar(
                 radius: 25.0,
-                backgroundColor: data?['avatarColor'] ?? Color.fromARGB(255, 112, 14, 126),
+                backgroundColor: data?['avatarColor'] ?? Color.fromARGB(255, 1, 75, 4) ,
                 backgroundImage: data?['photoURL'] != null ? NetworkImage(data?['photoURL']!) : null,
                 child: data?['photoURL'] == null ? Text(data?['username']?.substring(0, 1).toUpperCase() ?? '?',
                   style: TextStyle(fontSize: 16.0, color: Colors.white, fontWeight: FontWeight.bold),

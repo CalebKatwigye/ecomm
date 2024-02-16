@@ -247,7 +247,7 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 decoration: BoxDecoration(
                   color: (data['senderId'] == _firebaseAuth.currentUser!.uid)
-                      ? Color.fromARGB(255, 4, 123, 8) // Green for sender
+                      ? Color.fromARGB(255, 1, 75, 4) // Green for sender
                       : Colors.grey, // Grey for receiver
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(
