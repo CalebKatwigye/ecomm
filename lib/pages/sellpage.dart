@@ -138,6 +138,27 @@ class _SellPageState extends State<SellPage> {
     }
   }
 
+  void validateAndPostAd() {
+  if (itemNameController.text.isEmpty ||
+      selectedCategory == null ||
+      priceController.text.isEmpty ||
+      selectedLocation == null ||
+      descriptionController.text.isEmpty ||
+      selectedImage == null) {
+    // If any field is empty or no image is selected, show Snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Color.fromARGB(255, 4, 123, 8),
+        content: Text('Please fill out all fields and add an image.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  } else {
+    // All fields are filled, proceed to post the ad
+    postAd();
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,7 +243,7 @@ class _SellPageState extends State<SellPage> {
                 ),
               ),
               SizedBox(height: 16),
-              MyButton(onTap: postAd, text: "Post Ad"),
+              MyButton(onTap: validateAndPostAd, text: "Post Ad"),
             ],
           ),
         ),

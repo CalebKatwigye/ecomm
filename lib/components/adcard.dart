@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomm/pages/chatpage.dart';
-import 'package:ecomm/pages/messages.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -280,7 +280,7 @@ class MyAdPost extends StatelessWidget {
                 ],
               ),
               Container(
-                width: 2,
+                width: 1,
                 height: 70,
                 color: Colors.grey,
                 margin: EdgeInsets.symmetric(vertical: 10),
@@ -290,8 +290,8 @@ class MyAdPost extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
                     imageUrl,
-                    width: 100,
-                    height: 100,
+                    width: 90,
+                    height: 90,
                     fit: BoxFit.cover,
                   ),
                 )
